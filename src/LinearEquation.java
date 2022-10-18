@@ -5,46 +5,92 @@ public class LinearEquation {
     private int yValue2;
     private String firstCoordinates;
     private String secondCoordinates;
+    private String slope;
+    private String yInt;
 
-    public LinearEquation(String firstCoords, String secondCoords){
+
+    public LinearEquation(int x1, int y1, int x2, int y2){
         // setting coordinate values for point 1
-        int commaSpot = firstCoords.indexOf(",");
-        int closingParenthSpot = firstCoords.indexOf(")");
-        xValue1 = Integer.parseInt(firstCoords.substring(1,commaSpot));
-        yValue1 = Integer.parseInt(firstCoords.substring(commaSpot+2,closingParenthSpot));
-        // setting coordinate values for point 2
-        int commaSpot2 = secondCoords.indexOf(",");
-        int closingParenthSpot2 = secondCoords.indexOf(")");
-        xValue2 = Integer.parseInt(secondCoords.substring(1,commaSpot));
-        yValue2 = Integer.parseInt(secondCoords.substring(commaSpot+2,closingParenthSpot2));
-        // setting coordinate pairs
-        firstCoordinates = firstCoords;
-        secondCoordinates = secondCoords;
+        xValue1 = x1;
+        xValue2 = x2;
+        yValue1 = y1;
+        yValue2 = y2;
+        firstCoordinates = "(" + x1 + "," + y1 + ")";
+        secondCoordinates = "(" + x2 + "," + y2 + ")";
+    }
+
+    public double slope(){
+        String slope = "";
+
+        // different forms of slope
+        String slopeAsFrac = (yValue2 - yValue1) + "/" + (xValue2 - xValue1);
+
+        // making sure double negative in slopeasfrac gets printed as a positive
+        if (yValue2-yValue1 < 0 && xValue2-xValue1 < 0){
+            slopeAsFrac = (yValue2 - yValue1)*-1 + "/" + (xValue2 - xValue1)*-1;
+        } else if (yValue1 == yValue2){
+            slopeAsFrac = "";
+        }
+
+        // returning a whole number instead of a reducable fraction
+        if ((yValue2 - yValue1)%(xValue2-xValue1) == 0){
+            double newSlopeAsFrac = (yValue2-yValue1)/(xValue2-xValue1);
+            slopeAsFrac = String.valueOf(newSlopeAsFrac);
+        }
+        this.slope = slopeAsFrac;
+
+        // converting slope to a double & rounding it
+        double slopeAsDouble = (double)(yValue2 - yValue1) / (xValue2 - xValue1);
+        double roundedSlope = Math.round(slopeAsDouble*100)/(double)100;
+
+
+        // if slope is 1 or -1
+        if (roundedSlope == 1){
+            slopeAsFrac = "";
+        } else if (roundedSlope == -1){
+            slopeAsFrac = "-";
+        }
+
+        return roundedSlope;
+    }
+
+    public double yIntercept(){
+        // finding y intercept
+        double yInter = yValue1 - (slope() * xValue1);
+
+        String yIntercept = "";
+        if (yInter > 0){
+            yIntercept = "+ " + yInter;
+        } else if (yInter < 0){
+            yIntercept = String.valueOf(yInter);
+        }
+        yInt = yIntercept;
+
+        return yInter;
+    }
+
+    public String equation(){
+        return "y = " + slope + "x " + yInt;
+    }
+
+    public double distance(){
+        // calculating and returning distance btwn two points
+        double distance = Math.sqrt(Math.pow(xValue2 - xValue1, 2) + Math.pow(yValue2 - yValue1, 2));
+        distance = Math.round(distance*100)/(double)100;
+        return distance;
     }
 
     public String lineInfo(){
         if (xValue1 == xValue2) {
             return "These points are on a vertical line: x=" + xValue1;
         } else {
-            // different forms of slope
-            String slopeAsFrac = (yValue2 - yValue1) + "/" + (xValue2 - xValue1);
-            double slopeAsDouble = (yValue2 - yValue1) / (xValue2 - xValue1);
-            double roundedSlope = Math.round(slopeAsDouble*100)/100;
-
-            // if slope is 1 or -1
-            if (slopeAsDouble == 1){
-                roundedSlope = ;
-            }
-
-            // finding y intercept
-            double yInter = yValue1 - (roundedSlope * xValue1);
-
-            // calculating distance btwn two points
-            double distance = Math.sqrt(Math.pow(xValue2 - xValue1, 2) + Math.pow(yValue2 - yValue1, 2));
-
             // return
-            return "The two points are: " + firstCoordinates + " and " + secondCoordinates + "\n" + "The equation of the line between these points is y=" + slopeAsFrac + "x" + yInter + "\n" + "The slope of this line is: " + roundedSlope + "\n" + "The y-intercept of this line is: " + yInter + "\n" + "The distance between the two points is: " + distance;
+            return "The two points are: " + firstCoordinates + " and " + secondCoordinates + "\n" + "The equation of the line between these points is " + equation() + "\n" + "The slope of this line is: " + slope() + "\n" + "The y-intercept of this line is: " + yIntercept() + "\n" + "The distance between the two points is: " + distance();
         }
+    }
+
+    public String coordinateForX(double userXCoord){
+        return "(" + userXCoord + "," + (slope()*userXCoord + yIntercept()) + ")";
     }
 
 }
