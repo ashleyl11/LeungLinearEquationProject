@@ -5,7 +5,8 @@ public class LinearEquation {
     private int yValue2;
     private String firstCoordinates;
     private String secondCoordinates;
-    private String slope;
+    private double slope;
+    private String slopeAsFrac;
     private String yInt;
 
 
@@ -17,11 +18,13 @@ public class LinearEquation {
         yValue2 = y2;
         firstCoordinates = "(" + x1 + "," + y1 + ")";
         secondCoordinates = "(" + x2 + "," + y2 + ")";
+
+        // band aid approach!
+        setUpSlope();
+        yIntercept();
     }
 
-    public double slope(){
-        String slope = "";
-
+    private void setUpSlope() {
         // different forms of slope
         String slopeAsFrac = (yValue2 - yValue1) + "/" + (xValue2 - xValue1);
 
@@ -37,19 +40,23 @@ public class LinearEquation {
             double newSlopeAsFrac = (yValue2-yValue1)/(xValue2-xValue1);
             slopeAsFrac = String.valueOf(newSlopeAsFrac);
         }
-        this.slope = slopeAsFrac;
+
+
+        // if slope is 1 or -1
+        if (slope() == 1){
+            slopeAsFrac = "";
+        } else if (slope() == -1){
+            slopeAsFrac = "-";
+        }
+
+        this.slopeAsFrac= slopeAsFrac;
+    }
+
+    public double slope(){
 
         // converting slope to a double & rounding it
         double slopeAsDouble = (double)(yValue2 - yValue1) / (xValue2 - xValue1);
         double roundedSlope = Math.round(slopeAsDouble*100)/(double)100;
-
-
-        // if slope is 1 or -1
-        if (roundedSlope == 1){
-            slopeAsFrac = "";
-        } else if (roundedSlope == -1){
-            slopeAsFrac = "-";
-        }
 
         return roundedSlope;
     }
@@ -62,7 +69,7 @@ public class LinearEquation {
         if (yInter > 0){
             yIntercept = "+ " + yInter;
         } else if (yInter < 0){
-            yIntercept = String.valueOf(yInter);
+            yIntercept = "- " + (yInter*-1);
         }
         yInt = yIntercept;
 
@@ -70,7 +77,7 @@ public class LinearEquation {
     }
 
     public String equation(){
-        return "y = " + slope + "x " + yInt;
+        return "y = " + slopeAsFrac + "x " + yInt;
     }
 
     public double distance(){
